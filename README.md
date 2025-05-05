@@ -5,12 +5,12 @@
 Chatbot criado para o desafio da FURIA Tech com Flask/Javascript/HTML/CSS, com o objetivo de promover a interação do fã com a FURIA usando IA, através de uma conversa de fã pra fã.
 
 ## Principais tecnologias
-Flask
-Python
-Javascript
-HTML
-CSS
-Selenium
+Flask/
+Python/
+Javascript/
+HTML/
+CSS/
+Selenium/
 hltv-api - `https://github.com/SocksPls/hltv-api?tab=readme-ov-file`
 
 ## Instalação
