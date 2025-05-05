@@ -2,7 +2,7 @@
 ![furia-esports-logo-png_seeklogo-428783](https://github.com/user-attachments/assets/b3faf098-416a-4a8e-b4ae-df8d9f8e022c)
 
 ## Visão Geral
-Chatbot criado para o desafio da FURIA Tech com Flask/Javascript/HTML/CSS, com o objetivo de promover a interação do fã com a FURIA usando IA, através de uma conversa de fã pra fã.
+Chatbot da FURIA criado com Flask/Javascript/HTML/CSS, com o objetivo de promover a interação do fã com a FURIA usando IA, através de uma conversa de fã pra fã.
 
 ## Principais tecnologias
 Flask/
