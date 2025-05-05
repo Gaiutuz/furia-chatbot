@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FURIA Chatbot</title>
+    <link rel="icon" type="image/png" href="https://furiagg.fbitsstatic.net/sf/img/favicon.ico?theme=main&amp;v=202503171541">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="landing-page">
+        <div id="navbar">
+            <div class="navbar-container">
+                <a href="{{ url_for('index_page') }}" class="navbar-logo">
+                    <img src="{{ url_for('static', filename='assets/logo-furia.png') }}" alt="Logo FURIA"> </a>
+                <div class="navbar-links">
+                    <a href="{{ url_for('index_page') }}">LANDING PAGE</a>
+                    <a href="{{ url_for('chat_page') }}">CHAT</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container"> <div class="secao" id="secao-call">
+                <video autoplay muted loop playsinline class="bg-video">
+                    <source src="{{ url_for('static', filename='assets/furia_landing_bw.webm') }}" type="video/webm">
+                    Seu navegador não suporta vídeos HTML5.
+                </video>
+                <div class="conteudo">
+                    <h1>SAIBA MAIS DA FURIA</h1>
+                    <button class="chat-button" onclick="window.location.href='/chat_page'">CONVERSAR</button>
+                </div>
+            </div>
+
+            <div class="secao" id="secao-sobre-1">
+                <div class="conteudo-sobre texto-esquerda">
+                    <div class="texto">
+                        <h2>FIQUE POR DENTRO DA FURIA</h2>
+                        <p>Saiba mais sobre os jogadores do time da FURIA do CS2, resultados de suas partidas e campeonatos, o seu ranking e muito mais.</p>
+                    </div>
+                    <div class="imagem">
+                        <img src="{{ url_for('static', filename='assets/furiacs1_raw.jpg') }}" alt="Imagem Sobre 1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="secao" id="secao-sobre-2">
+                <div class="conteudo-sobre texto-direita">
+                    <div class="imagem">
+                        <img src="{{ url_for('static', filename='assets/furiacs2.jpg') }}" alt="Imagem Sobre 2">
+                    </div>
+                    <div class="texto">
+                        <h2>RESPOSTAS 100% ATUALIZADAS</h2>
+                        <p>Todos os dados são obtidos em tempo real da HLTV, plataforma web que possui uma das principais base de dados de todo o cenário de Counter Strike.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

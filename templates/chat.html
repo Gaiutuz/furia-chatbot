@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FURIA Chatbot</title>
+    <link rel="icon" type="image/png" href="https://furiagg.fbitsstatic.net/sf/img/favicon.ico?theme=main&amp;v=202503171541">
+    <style>
+        /* Reset básico e Box Sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: black;
+            color: white;
+        }
+
+        /* --- Estilos da Navbar --- */
+        #navbar {
+            width: 100%;
+            background-color: white;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-logo img {
+            display: block;
+            width: 90px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .navbar-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-links a:hover {
+            color: #bbb;
+        }
+
+        /* --- Estilos do Conteúdo Principal --- */
+        .container {
+            display: flex;
+            width: 100%;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #111;
+            color: white;
+            padding: 1rem;
+            overflow-y: auto;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        /* Estilo para o botão Nova Conversa */
+        #new-chat-button {
+            display: block; /* Ocupa a largura total */
+            width: 100%;
+            padding: 0.75rem 0.5rem;
+            margin-bottom: 1rem; /* Espaço abaixo do botão */
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        #new-chat-button:hover {
+            background-color: #555;
+        }
+
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1; /* Faz a lista crescer */
+        }
+
+        /* Estilo para itens de histórico (conversas) */
+        .sidebar li {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #333;
+            cursor: pointer; /* Indica que é clicável */
+            transition: background-color 0.2s ease;
+        }
+
+        .sidebar li:hover {
+            background-color: #222;
+        }
+
+        /* Estilo para a conversa ativa */
+        .sidebar li.active {
+            background-color: #444; /* Cor diferente para o item ativo */
+            font-weight: bold;
+        }
+
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            background-color: black;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Estilo Base para Mensagens (Balão) */
+        .chat-box div {
+            background-color: white;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            max-width: 75%;
+            word-wrap: break-word;
+            clear: both;
+            float: left; /* Padrão para assistente */
+        }
+
+        .chat-box .user {
+            float: right;
+            background-color: #e0e0e0;
+        }
+
+        .chat-box .assistant {
+            float: left;
+        }
+
+        /* Limpa floats após cada mensagem */
+        .chat-box div::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+
+        #chat-form {
+            display: flex;
+            border-top: 1px solid #333;
+            background-color: #111;
+            padding: 0.5rem;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #444;
+            font-size: 1rem;
+            background-color: #222;
+            color: white;
+            border-radius: 5px;
+            margin-right: 0.5rem;
+        }
+
+        #user-input::placeholder {
+            color: #888;
+        }
+
+        #chat-form button {
+            padding: 0.75rem 1.2rem;
+            font-size: 1rem;
+            border: none;
+            background-color: #eee;
+            color: black;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+
+        #chat-form button:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbar">
+      <div class="navbar-container">
+          <a href="{{ url_for('index_page') }}" class="navbar-logo">
+              <img src="{{ url_for('static', filename='assets/logo-furia.png') }}" alt="Logo FURIA">
+          </a>
+          <div class="navbar-links">
+              <a href="{{ url_for('index_page') }}">LANDING PAGE</a>
+              <a href="{{ url_for('chat_page') }}">CHAT</a>
+          </div>
+      </div>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Histórico</h2> <button id="new-chat-button">Nova Conversa</button> <ul id="history-list">
+                <li>Carregando histórico...</li> </ul>
+        </aside>
+
+        <main class="chat-container">
+            <div id="chat-box" class="chat-box">
+                <div class="assistant">Olá! Sou seu assistente fã da FURIA. Como posso ajudar hoje?</div>
+            </div>
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Digite sua mensagem..." autocomplete="off" required>
+                <button type="submit">Enviar</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("user-input");
+        const chatBox = document.getElementById("chat-box");
+        const historyList = document.getElementById("history-list");
+        const newChatButton = document.getElementById("new-chat-button"); // Seleciona o novo botão
+
+        // Variável global para manter o ID da conversa atual ativo no frontend
+        let currentConversationId = null;
+
+        function addMessageToChatBox(role, text) {
+            const msg = document.createElement("div");
+            msg.classList.add(role);
+            msg.innerText = text;
+            chatBox.appendChild(msg);
+            // Scroll para o fim
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Função para limpar o chat box e exibir mensagens de uma conversa
+        function displayConversationMessages(messages) {
+            chatBox.innerHTML = ""; // Limpa o chat box atual
+            messages.forEach(msg => {
+                 // Exclui mensagens de sistema e de função/tool da exibição no chatbox
+                 if (msg.role !== 'system' && msg.role !== 'function' && msg.role !== 'tool') {
+                     addMessageToChatBox(msg.role, msg.content);
+                 }
+            });
+             chatBox.scrollTop = chatBox.scrollHeight; // Garante o scroll após carregar tudo
+        }
+
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Adiciona a mensagem do usuário ao chat
+            addMessageToChatBox("user", message);
+            input.value = "";
+            input.disabled = true; // Desabilita input enquanto espera
+            form.querySelector('button').disabled = true; // Desabilita botão
+
+            // Adiciona um indicador de "digitando..." (opcional)
+            const typingIndicator = document.createElement("div");
+            typingIndicator.classList.add("assistant");
+            typingIndicator.innerText = "..."; // Ou um GIF animado
+            typingIndicator.style.opacity = "0.7";
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ message })
+                });
+
+                // Remove o indicador de "digitando..."
+                if (chatBox.contains(typingIndicator)) {
+                    chatBox.removeChild(typingIndicator);
+                }
+
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({ reply: "Erro ao comunicar com o servidor." }));
+                    // Corrigido: Garante que apenas a mensagem de erro seja exibida
+                    addMessageToChatBox("assistant", `Erro ${res.status}: ${errorData.reply || 'Não foi possível obter resposta.'}`);
+                    // Mesmo em caso de erro, podemos tentar atualizar a sidebar
+                    // pois a mensagem do usuário foi adicionada ao histórico no backend.
+                    loadHistorySidebar();
+                    return;
+                }
+
+                const data = await res.json();
+                addMessageToChatBox("assistant", data.reply);
+
+                // Atualizar exibição do histórico lateral após resposta bem-sucedida
+                loadHistorySidebar();
+
+            } catch (error) {
+                // Remove o indicador de "digitando..." em caso de erro de rede
+                 if (chatBox.contains(typingIndicator)) {
+                     chatBox.removeChild(typingIndicator);
+                 }
+                console.error("Erro na requisição fetch:", error);
+                addMessageToChatBox("assistant", "Erro de conexão. Tente novamente.");
+                 // Atualiza a sidebar mesmo em erro de conexão, pois a mensagem do usuário foi adicionada localmente antes do fetch
+                 loadHistorySidebar();
+            } finally {
+                 input.disabled = false; // Habilita input novamente
+                 form.querySelector('button').disabled = false; // Habilita botão
+            }
+        });
+
+        // Função para carregar e exibir uma conversa específica
+        async function loadConversation(convoId) {
+             try {
+                const res = await fetch(`/get_conversation/${convoId}`);
+                 if (!res.ok) {
+                    console.error("Erro ao carregar conversa:", res.status);
+                     // Corrigido: Adiciona apenas a mensagem de erro ao chat box
+                     addMessageToChatBox("assistant", `Erro ao carregar mensagens da conversa (Status: ${res.status}).`);
+                     // Tenta recarregar a sidebar mesmo em caso de erro, para refletir o estado atual
+                     loadHistorySidebar();
+                    return;
+                 }
+                const messages = await res.json();
+                displayConversationMessages(messages); // Exibe as mensagens
+
+                 // Atualiza o ID da conversa atual no frontend
+                currentConversationId = convoId;
+                 // Atualiza a sidebar para destacar a conversa ativa
+                 loadHistorySidebar();
+
+             } catch (error) {
+                 console.error("Erro ao buscar conversa:", error);
+                 // Corrigido: Adiciona apenas a mensagem de erro ao chat box
+                 addMessageToChatBox("assistant", "Erro de conexão ao tentar carregar a conversa.");
+                 // Tenta recarregar a sidebar mesmo em erro de conexão
+                 loadHistorySidebar();
+             }
+        }
+
+        // Função para carregar APENAS os resumos das conversas para o menu lateral
+        async function loadHistorySidebar() {
+            try {
+                const res = await fetch("/history");
+                 if (!res.ok) {
+                    console.error("Erro ao carregar histórico sidebar:", res.status);
+                    historyList.innerHTML = "<li>Erro ao carregar histórico.</li>";
+                    return;
+                 }
+                const data = await res.json(); // Espera por { conversations: [...], current_convo_id: '...' }
+                const conversations = data.conversations;
+                const currentConvoId = data.current_convo_id;
+
+                historyList.innerHTML = ""; // Limpa antes de adicionar
+
+                if (conversations.length === 0) {
+                     historyList.innerHTML = "<li>Nenhum histórico.</li>";
+                } else {
+                    conversations.forEach(convo => {
+                        const li = document.createElement("li");
+                        li.textContent = convo.title;
+                        li.dataset.convoId = convo.id; // Armazena o ID da conversa no elemento LI
+
+                        // Adiciona a classe 'active' se for a conversa atual
+                        if (convo.id === currentConvoId) {
+                            li.classList.add("active");
+                             // Atualiza o ID da conversa atual no frontend globalmente
+                            currentConversationId = convo.id;
+                        }
+
+                        // Adiciona event listener para carregar a conversa ao clicar
+                        li.addEventListener("click", () => {
+                            if (li.dataset.convoId && li.dataset.convoId !== currentConversationId) {
+                                loadConversation(li.dataset.convoId);
+                            }
+                            // Se clicar na conversa já ativa, não faz nada
+                        });
+
+                        historyList.appendChild(li);
+                    });
+                }
+
+            } catch (error) {
+                console.error("Erro ao buscar histórico sidebar:", error);
+                historyList.innerHTML = "<li>Erro de conexão histórico.</li>";
+            }
+        }
+
+        // Event listener para o botão Nova Conversa
+        newChatButton.addEventListener("click", async () => {
+             try {
+                 const res = await fetch("/new_conversation", {
+                     method: "POST" // Pode ser POST já que está mudando o estado do servidor
+                 });
+
+                 if (!res.ok) {
+                     console.error("Erro ao criar nova conversa:", res.status);
+                     addMessageToChatBox("assistant", `Erro ao criar nova conversa (Status: ${res.status}).`);
+                     return;
+                 }
+
+                 const data = await res.json(); // Espera por { new_convo_id: '...', messages: [...] }
+                 const newConvoId = data.new_convo_id;
+                 const initialMessages = data.messages;
+
+                 // Limpa e exibe as mensagens iniciais da nova conversa
+                 displayConversationMessages(initialMessages);
+
+                 // Atualiza o ID da conversa atual no frontend
+                 currentConversationId = newConvoId;
+
+                 // Recarrega a sidebar para incluir e destacar a nova conversa
+                 loadHistorySidebar();
+
+             } catch (error) {
+                 console.error("Erro na requisição 'Nova Conversa':", error);
+                 addMessageToChatBox("assistant", "Erro de conexão ao tentar criar nova conversa.");
+             }
+        });
+
+
+        // Carrega a conversa atual e a sidebar ao carregar a página
+        // A loadHistorySidebar agora carrega a lista E identifica qual é a atual.
+        // Depois que a sidebar carregar e identificar a conversa atual,
+        // chamamos loadConversation para carregar essa conversa.
+        async function initialLoad() {
+            // Carrega a sidebar primeiro para obter o ID da conversa atual
+            await loadHistorySidebar();
+            // Verifica se currentConversationId foi definido (ou seja, há conversas)
+            if (currentConversationId) {
+                 loadConversation(currentConversationId); // Carrega a conversa atual identificada
+            } else {
+                 // Se não houver conversas (sessão nova e sem histórico),
+                 // a sidebar já deve estar vazia ou com "Nova Conversa",
+                 // e o chatbox deve estar limpo com a mensagem inicial padrão.
+                 // Podemos adicionar a mensagem inicial padrão aqui no frontend.
+                 chatBox.innerHTML = ''; // Garante que está limpo
+                 // A mensagem inicial já está no HTML, então talvez não precise adicionar via JS
+                 // addMessageToChatBox("assistant", "Olá! Sou seu assistente fã da FURIA. Como posso ajudar hoje?");
+            }
+        }
+
+        // Executa o carregamento inicial
+        initialLoad();
+
+
+        // Nota: Esta solução armazena conversas em memória no servidor.
+        // Elas serão perdidas ao reiniciar o servidor. Para persistência,
+        // seria necessário integrar um banco de dados.
+
+    </script>
+</body>
+</html>
